@@ -14,6 +14,8 @@
       #messages li { padding: 5px 10px; }
       #messages li:nth-child(odd) { background: #eee; }
     </style>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>  
+    <script src="http://code.jquery.com/jquery-1.11.2.js"></script>
   </head>
     
   <body>
@@ -23,12 +25,12 @@
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
       
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>  
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    
       
     <script>
         var host = location.origin;
         var socket = io.connect(host, {port: 5000, transports: ["websocket"]});
+        
         // server receives event as chat message
         $('form').submit(function(){
             socket.emit('chat message', $('#m').val());
