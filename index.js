@@ -1,10 +1,12 @@
 var express = require('express'),
     app = express(),
-    server = require('http').Server(app),
+    server = require('http').createServer(app),
     io = require('socket.io').listen(server);
 
 server.listen(process.env.PORT || 5000);
 
+io.set("transports",["websocket"]);
+io.set("polling duration", 10)
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html')
