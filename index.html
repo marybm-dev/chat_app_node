@@ -1,8 +1,9 @@
 
 <!doctype html>
 <html>
+    
   <head>
-    <title>Socket.IO chat</title>
+    <title>Chat App Challenge</title>
     <style>
       * { margin: 0; padding: 0; box-sizing: border-box; }
       body { font: 13px Helvetica, Arial; }
@@ -14,15 +15,20 @@
       #messages li:nth-child(odd) { background: #eee; }
     </style>
   </head>
+    
   <body>
     <ul id="messages"></ul>
+      
     <form action="">
       <input id="m" autocomplete="off" /><button>Send</button>
     </form>
+      
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>  
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+      
     <script>
-        var socket = io();
+        var host = location.origin;
+        var socket = io.connect(host, {port: 5000, transports: ["websocket"]});
         // server receives event as chat message
         $('form').submit(function(){
             socket.emit('chat message', $('#m').val());
@@ -43,5 +49,6 @@
             socket.emit('my other event', { my : 'data' });
         });
     </script>
+      
   </body>
 </html>
