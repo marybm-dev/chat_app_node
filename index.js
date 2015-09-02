@@ -1,19 +1,30 @@
+// dependencies
 var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server);
+    io = require('socket.io').listen(server),
+    usernames = {};
 
+// set heroku environment port
 server.listen(process.env.PORT || 5000);
 
+// set transport
 io.set("transports",["websocket"]);
 
+// app route
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html')
 });
 
+// Socket IO server
 io.on('connection', function (socket) {
-      // fire connection event
-    socket.broadcast.emit('user connected');
+    // fire connection event
+    socket.on('connect', function(username) {
+        if (!usernames[username]) {
+            io.emit('connect', username + ' connected');
+            usernames[username] = socket.username = username;
+        }
+    });
     
     // fire disconnect event
     socket.on('disconnect', function () {
@@ -21,36 +32,12 @@ io.on('connection', function (socket) {
     });
     
     // display the chat message
-    socket.on('chat message', function (msg) {
-        io.emit('chat message', msg);
+    socket.on('chat message', function (user, msg) {
+        io.emit('chat message', user, msg);
     });
+    
+    socket.on('news', function(data) {
+       io.emit('news', data); 
+    });
+    
 });
-
-//var WebSocketServer = require("ws").Server
-//var http = require("http")
-//var express = require("express")
-//var app = express()
-//var port = process.env.PORT || 5000
-//
-//app.use(express.static(__dirname + "/index.html"))
-//
-//var server = http.createServer(app)
-//server.listen(port)
-//
-//console.log("http server listening on %d", port)
-//
-//var wss = new WebSocketServer({server: server})
-//console.log("websocket server created")
-//
-//wss.on("connection", function(ws) {
-//  var id = setInterval(function() {
-//    ws.send(JSON.stringify(new Date()), function() {  })
-//  }, 1000)
-//
-//  console.log("websocket connection open")
-//
-//  ws.on("close", function() {
-//    console.log("websocket connection close")
-//    clearInterval(id)
-//  })
-//})

@@ -22,34 +22,63 @@
     <ul id="messages"></ul>
       
     <form action="">
-      <input id="m" autocomplete="off" /><button>Send</button>
+        <input id="input" autocomplete="off" placeholder="Enter a username and hit Enter" /><button>Send</button>
     </form>
-      
-    
       
     <script>
         var host = location.origin;
         var socket = io.connect(host, {port: 5000, transports: ["websocket"]});
+        var userLoggedIn = false
+        var user = ''
         
         // server receives event as chat message
         $('form').submit(function(){
-            socket.emit('chat message', $('#m').val());
-            $('#m').val('');
+            if (userLoggedIn && $('#input').val() != '') {
+                currMessage = $('#input').val()
+                socket.emit('chat message', user, currMessage);
+            }
+            $('#input').val('');
             return false;
         });
-        socket.on('chat message', function(msg){
-            $('#messages').append($('<li>').text(msg));
-        });
+        
+        // display when a user has connected
         socket.on('connect', function(){
-            $('#messages').append($('<li>').text('a user connected'));
+            // get the user's name and clear the placeholder
+            // so the input box can now be used for chat messages
+            var getUsername = function(callback) {
+                callback($('#input').val());
+                $('#input').removeAttr('placeholder');
+            };
+            
+            // let everyone know who joined the chat
+            $('#input').keypress(function(event) {
+                if ( (event.which == 13) && !userLoggedIn ) {
+                    getUsername(function(username) {
+                        socket.emit('news', '... ' + username + ' connected ...');
+                        $('#input').val('');
+                        userLoggedIn = true;
+                        user = username
+                    });
+                }
+            });
         });
+        
+        // display when a user has disconnected
         socket.on('disconnect', function(){
             $('#messages').append($('<li>').text('user disconnected'));
         });
-        socket.on('news', function(data){
-            console.log(data);
-            socket.emit('my other event', { my : 'data' });
+        
+        // add chat message to list
+        socket.on('chat message', function(user, msg){
+            console.log(msg);
+            $('#messages').append($('<li>').text(user + ': ' + msg));
         });
+        
+        // allow to display other events
+        socket.on('news', function(data){
+            $('#messages').append($('<li>').text(data));
+        });
+        
     </script>
       
   </body>
