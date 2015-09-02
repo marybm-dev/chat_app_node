@@ -19,8 +19,6 @@ app.get('/', function (req, res) {
 // Socket IO server
 io.on('connection', function (socket) {
     
-    console.log(usernames);
-    console.log(socket.username)
     if (!socket.username) {
         io.emit('usernames', usernames);
     }
