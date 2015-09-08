@@ -5,6 +5,7 @@
 // dependencies
 var express = require('express'),
     app = express(),
+    app.use(express.static(PUBLIC_PATH)),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     usernames = {};
