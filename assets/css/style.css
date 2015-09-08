@@ -1,0 +1,64 @@
+
+/*
+ *    Form Objects
+ */
+form { 
+      background-color: #C2D6D6; 
+      padding: 3px; 
+      position: fixed; 
+      bottom: 0; 
+      width: 100%; 
+}
+
+form input { 
+      border: 0; 
+      padding: 10px; 
+      width: 90%; 
+      margin-right: .5%; 
+}
+
+form button { 
+      width: 9%; 
+      padding: 10px; 
+}
+
+
+/*
+ *    Messages List View
+ */
+#messages { 
+      list-style-type: none; 
+      color: black; 
+      font: 13px "Lucida Console" 
+}
+
+#messages li { 
+      padding: 7px 10px; 
+}
+
+#messages li:nth-child(odd) { 
+      background-color: #CCE0F5; 
+}
+
+
+/*
+ *    Users List View
+ */
+#users { 
+      list-style-type: none; 
+      color: black; 
+}
+
+#users li { 
+      padding: 7px 10px; 
+}
+
+#users li:before { 
+      content: "\e008"; 
+      font-family: 'Glyphicons Halflings'; 
+      font-size: 11px; 
+      float: left; 
+      margin-top: 4px; 
+      margin-left: -15px; 
+      color: #CCCCCC; 
+}

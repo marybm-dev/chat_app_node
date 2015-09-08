@@ -4,18 +4,7 @@
     
   <head>
     <title>Chat App Challenge</title>
-    <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      form { background: #C2D6D6; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-      form button { width: 9%; padding: 10px; }
-      #messages { list-style-type: none; color: black; font: 13px "Lucida Console" }
-      #messages li { padding: 7px 10px; }
-      #messages li:nth-child(odd) { background: #CCE0F5; }
-      #users { list-style-type: none; color: black; }
-      #users li { padding: 7px 10px; }
-      #users li:before { content: "\e008"; font-family: 'Glyphicons Halflings'; font-size: 11px; float: left; margin-top: 4px; margin-left: -15px; color: #CCCCCC; }
-    </style>
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>  
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
@@ -24,90 +13,19 @@
     
   <body>
         <div class="container-fluid">
-        <div class="col-sm-8"><h3>Chat Messages</h3>
-            <ul id="messages"></ul>
+            <div class="col-sm-8"><h3>Chat Messages</h3>
+                <ul id="messages"></ul>
+            </div>
+            <div class="col-sm-4"><h3>Users</h3>
+                <ul id="users"></ul>
+            </div>
         </div>
-        <div class="col-sm-4"><h3>Users</h3>
-            <ul id="users"></ul>
-      </div>
-  </div>
       
     <form action="">
         <input id="input" autocomplete="off" placeholder="Enter a username and hit Enter" /><button type="button" class="btn btn-primary">Send</button>
     </form>
-      
-    <script>
-        var host = location.origin;
-        var socket = io.connect(host, {port: 5000, transports: ["websocket"]});
-        var userLoggedIn = false
-        var user = ''
-        
-        // server receives event as chat message
-        $('form').submit(function(){
-            if (userLoggedIn && $('#input').val() != '') {
-                socket.emit('chat message', user, $('#input').val());
-            }
-            $('#input').val('');
-            return false;
-        });
-        
-        // display when a user has connected
-        socket.on('connect', function(){
-            // get the user's name and clear the placeholder
-            // so the input box can now be used for chat messages
-            var getUsername = function(callback) {
-                callback($('#input').val());
-                $('#input').removeAttr('placeholder');
-            };
-            
-            // let everyone know who joined the chat
-            $('#input').keypress(function(event) {
-                if ( (event.which == 13) && !userLoggedIn ) {
-                    getUsername(function(username) {
-                        socket.emit('news', '... ' + username + ' connected ...');
-                        socket.emit('join', username);
-                        $('#input').val('');
-                        userLoggedIn = true;
-                        user = username
-                    });
-                }
-            });
-        });
-        
-        // display when a user has disconnected
-        // remove from the users list
-        socket.on('disconnect', function(username){
-            $('li').filter(function() { return $.text([this]) === username; }).remove();
-            $('#messages').append($('<li>').text(' ... ' + username + ' disconnected ...'));
-        });
-        
-        // add chat message to list
-        socket.on('chat message', function(user, msg){
-            console.log(msg);
-            $('#messages').append($('<li>').text(user + ': ' + msg));
-        });
-        
-        // allow to display other events in the messages box
-        socket.on('news', function(data){
-            $('#messages').append($('<li>').text(data));
-        });
+    
+    <script src="assets/js/chat.js"></script>
 
-        // add the user to the users list
-        socket.on('join', function(username){
-            $('#users').append($('<li>').text(username));
-        });
-
-        // display all currently connected users
-        socket.on('usernames', function (usernames){
-            // make sure we aren't duplicating the entries first
-            if (Object.keys(usernames).length != $('#users li').length) {
-                for (var i in usernames) {
-                $('#users').append($('<li>').text(usernames[i]));
-                }
-            }
-      });
-        
-    </script>
-      
   </body>
 </html>

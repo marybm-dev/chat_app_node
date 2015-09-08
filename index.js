@@ -1,3 +1,7 @@
+/* 
+ * This is the server side code
+*/
+
 // dependencies
 var express = require('express'),
     app = express(),
