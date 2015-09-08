@@ -5,10 +5,14 @@
 // dependencies
 var express = require('express'),
     app = express(),
-    app.use(express.static(PUBLIC_PATH)),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
     usernames = {};
+
+var path = require("path");
+
+// use the public folder as the root
+app.use(express.static(path.join(__dirname, 'public')));
 
 // set heroku environment port
 server.listen(process.env.PORT || 5000);
